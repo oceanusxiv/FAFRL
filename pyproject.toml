@@ -1,0 +1,32 @@
+[project]
+name = "fafrl"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "numpy>=2.5.4",
+    "opencv-python>=5.0.0.93",
+]
+
+[dependency-groups]
+dev = [
+    "scikit-build-core>=0.10.0",
+]
+
+[build-system]
+requires = ["scikit-build-core>=0.10.0"]
+build-backend = "scikit_build_core.build"
+
+
+[tool.scikit-build]
+wheel.packages = ["src/fafrl"]
+build-dir = "build/linux-clang-x64-debug"
+# Forces CMake to rebuild directly into the editable path target
+editable.mode = "redirect" 
+# Rebuild dynamically when importing the module if changes are made
+editable.rebuild = true 
+cmake.build-type = "Debug"
+cmake.fresh = true
+# cmake.args = ["--preset=linux-clang-x64-release", "-DENABLE_ASAN=ON"]
+cmake.args = ["--preset=linux-clang-x64-release"]

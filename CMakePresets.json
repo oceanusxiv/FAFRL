@@ -1,0 +1,36 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 25,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "linux-clang-x64-release",
+            "displayName": "Linux clang x64 Release (headless simulation)",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            },
+            "toolchainFile": "${sourceDir}/dependencies/faf-re/cmake/toolchains/linux-clang-x64.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "Python_ROOT_DIR": "${sourceDir}/.venv",
+                "Python_FIND_VIRTUALENV": "FIRST"
+            },
+            "environment": {
+                "VIRTUAL_ENV": "${sourceDir}/.venv"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "linux-clang-x64-release",
+            "configurePreset": "linux-clang-x64-release"
+        }
+    ]
+}
