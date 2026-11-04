@@ -12,14 +12,10 @@ def main():
         Path("python/fafrl/faf_config.lua").read_text(),
     )
     env.reset()
-    obs = env.step()
-    print(obs.heightmap.shape)
-    uint8_map = cv2.normalize(obs.heightmap, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
-    terrain_bgr = cv2.applyColorMap(uint8_map, cv2.COLORMAP_BONE)
-    while True:
-        cv2.imshow("RTS Global Tactical Viewport", terrain_bgr)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+    for _ in range(10000):
+        if env.is_game_over():
             break
+        env.step([])
 
 if __name__ == "__main__":
     main()

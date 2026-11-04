@@ -1,12 +1,18 @@
 LaunchConfig = {
     GameOptions = {
-        ScenarioFile = "/maps/SCMP_026/scmp_026_scenario.lua",
+        ScenarioFile = "/maps/SCMP_016/scmp_016_scenario.lua",
         FogOfWar = "none",
         UnitCap = "1000",
         CheatsEnabled = "false",
         PrebuiltUnits = "Off",
         Victory = "demoralization",
         CivilianAlliance = "none",
+        TeamSpawn = "fixed",
+        TeamLock = "locked",
+        Share = "ShareUntilDeath",
+        CheatMult = "1.0",
+        BuildMult = "1.0",
+        OmniCheat = "off"
     },
     GameMods = {},
     PlayerOptions = {
@@ -20,7 +26,7 @@ LaunchConfig = {
             PlayerColor = 1,
             ArmyColor = 1,
             StartSpot = 1,
-            Team = 1,
+            Team = 2,
             AIPersonality = "",
         },
         [2] = {
@@ -33,7 +39,7 @@ LaunchConfig = {
             PlayerColor = 2,
             ArmyColor = 2,
             StartSpot = 2,
-            Team = 2,
+            Team = 3,
             AIPersonality = "easy",
         },
     },

@@ -5,12 +5,18 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "gymnasium[mujoco]>=1.4.0",
+    "matplotlib>=3.11.2",
     "numpy>=2.5.4",
     "opencv-python>=5.0.0.93",
+    "rerun-sdk[notebook]>=0.41.0",
+    "torchrl>=0.14.1",
+    "tqdm>=4.70.1",
 ]
 
 [dependency-groups]
 dev = [
+    "ipykernel>=7.4.0",
     "scikit-build-core>=0.10.0",
 ]
 
