@@ -1,6 +1,6 @@
 [submodule "dependencies/faf-re"]
 	path = dependencies/faf-re
-	url = https://github.com/Draiget/faf-re.git
+	url = https://github.com/oceanusxiv/faf-re
 [submodule "dependencies/nanobind"]
 	path = dependencies/nanobind
 	url = https://github.com/wjakob/nanobind
