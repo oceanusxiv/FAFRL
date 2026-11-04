@@ -328,7 +328,7 @@ class CommandValidator final : public faf::remote::CCommandIdRewriter {
         }
 
         auto const entity = sim_.mEntityDB->FindEntityById(id);
-        if (sim_.mEntityDB == nullptr) {
+        if (entity == nullptr) {
             return false;
         }
         if (entity->IsUnit() == nullptr && entity->IsReconBlip() == nullptr &&
@@ -467,7 +467,7 @@ class FafRuntime {
     }
     auto GetBlueprintDisplayNames() const -> const std::vector<std::string> & { return bp_names_; }
     auto IsGameOver() const { return sim_ ? (sim_->mGameEnded || sim_->mGameOver) : false; }
-    auto GetCurrentBeat() const { return sim_ ? (sim_->mCurBeat != 0) : 0u; }
+    auto GetCurrentBeat() const { return sim_ ? sim_->mCurBeat : 0u; }
 
   private:
     auto Init(const std::string &game_data_path) -> void {
@@ -482,7 +482,7 @@ class FafRuntime {
             moho::RES_EnsureResourceManager();
             moho::RES_ActivatePendingFactories();
 
-            const msvc8::string data_path_script_name("SupComDataPathFAFRL.lua");
+            const msvc8::string data_path_script_name("init_faf.lua");
             if (!moho::DISK_SetupDataAndSearchPaths(data_path_script_name, game_data_path)) {
                 throw std::runtime_error(
                     std::format("FafRuntime::Init: moho::DISK_SetupDataAndSearchPaths "
@@ -560,7 +560,7 @@ class FafRuntime {
     bool IsRallyPointSplitCommand(const CommandType command_Type) {
         switch (command_Type) {
 
-        case CommandType::None:
+        case CommandType::Move:
         case CommandType::FormMove:
         case CommandType::Patrol:
         case CommandType::FormPatrol:
@@ -717,7 +717,7 @@ class FafRuntime {
             return;
         }
 
-        if (!IsRallyPointSplitCommand(command.command_type)) {
+        if (IsRallyPointSplitCommand(command.command_type)) {
             moho::BVSet<moho::EntId, moho::EntIdUniverse> regular_set;
             moho::BVSet<moho::EntId, moho::EntIdUniverse> rally_factory_set;
             for (auto const &unit : live_units) {
@@ -734,9 +734,10 @@ class FafRuntime {
             }
             if (!rally_factory_set.Empty()) {
                 moho::SSTICommandIssueData rally_issue(issue);
-                issue.nextCommandId = AllocateNextCmdId(src_id);
+                rally_issue.nextCommandId = AllocateNextCmdId(src_id);
                 sink.IssueFactoryCommand(rally_factory_set, rally_issue, clear_queue);
             }
+            return;
         }
         moho::BVSet<moho::EntId, moho::EntIdUniverse> unit_set;
         for (auto const &unit : live_units) {
