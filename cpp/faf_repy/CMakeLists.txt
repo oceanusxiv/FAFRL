@@ -2,6 +2,10 @@ set_target_properties(faf_sim zlib123 PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 nanobind_add_module(faf_repy
     ${CMAKE_CURRENT_SOURCE_DIR}/faf_runtime.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/faf_sim_core.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/faf_sim_core.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ensure_sim_thread.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ensure_sim_thread.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/faf_nanobind_module.cpp
 )
 target_include_directories(faf_repy INTERFACE

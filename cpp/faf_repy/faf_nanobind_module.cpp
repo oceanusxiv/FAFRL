@@ -1,6 +1,7 @@
 #include <nanobind/nanobind.h>
 #include <nanobind/ndarray.h>
 #include <nanobind/stl/optional.h>
+#include <nanobind/stl/pair.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 
@@ -11,7 +12,7 @@ using namespace nb::literals;
 
 namespace faf::py {
 
-constexpr std::size_t kUnitObsLen = 10;
+constexpr std::size_t kUnitObsLen = 11;
 constexpr std::size_t kEconObsLen = 11;
 constexpr std::size_t kResObsLen = 4;
 
@@ -24,17 +25,23 @@ class FafEnv {
         nb::ndarray<nb::numpy, float, nb::shape<-1, kUnitObsLen>> units;
     };
 
-    FafEnv(const std::string &game_data_dir, const std::string &lua_config_str,
-           bool include_unit_name)
+    FafEnv(const std::string &game_data_dir, const std::string &lua_config_str)
         : runtime_({game_data_dir, lua_config_str}) {};
 
     auto GetAllDisplayNames() const -> const std::vector<std::string> & {
         return runtime_.GetBlueprintDisplayNames();
     }
 
+    auto SetSeed(const std::uint32_t seed) { runtime_.SetSeed(seed); }
+
     auto IsGameOver() { return runtime_.IsGameOver(); }
 
     auto Reset() { runtime_.Reset(); }
+
+    auto GetMapDimensions() -> std::pair<std::size_t, std::size_t> {
+        const auto &map = runtime_.GetHeightmap();
+        return {map.extent(0), map.extent(1)};
+    }
 
     auto Step(const std::vector<Command> &commands) -> Observation {
         runtime_.Step(commands);
@@ -45,6 +52,7 @@ class FafEnv {
         auto unit_vec = std::make_unique<std::vector<float>>();
         unit_vec->reserve(units.size() * kUnitObsLen);
         for (const auto &unit : units) {
+            unit_vec->emplace_back(static_cast<float>(unit.entity_id));
             unit_vec->emplace_back(static_cast<float>(unit.pos_x));
             unit_vec->emplace_back(static_cast<float>(unit.pos_y));
             unit_vec->emplace_back(static_cast<float>(unit.pos_z));
@@ -111,6 +119,14 @@ class FafEnv {
 };
 
 NB_MODULE(faf_repy, m) {
+    nb::enum_<CommandType>(m, "CommandType", nb::is_arithmetic()).value("Move", CommandType::Move);
+    nb::enum_<TargetType>(m, "TargetType", nb::is_arithmetic())
+        .value("Entity", TargetType::Entity)
+        .value("Ground", TargetType::Ground);
+    nb::enum_<ActionOp>(m, "ActionOp", nb::is_arithmetic())
+        .value("IssueCommands", ActionOp::IssueCommand)
+        .value("IssueFactoryCommand", ActionOp::IssueFactoryCommand)
+        .value("ProcessInfoPair", ActionOp::ProcessInfoPair);
     nb::class_<Command>(m, "Command")
         .def(nb::init<>())
         .def_rw("army_id", &Command::army_id)
@@ -138,11 +154,13 @@ NB_MODULE(faf_repy, m) {
         .def_ro("units", &FafEnv::Observation::units, nb::rv_policy::reference);
 
     nb::class_<FafEnv>(m, "FafEnv")
-        .def(nb::init<const std::string &, const std::string &, bool>(), "game_data_dir"_a,
-             "lua_config_str"_a, "include_unit_name"_a = false)
+        .def(nb::init<const std::string &, const std::string &>(), "game_data_dir"_a,
+             "lua_config_str"_a)
         .def("reset", &FafEnv::Reset)
         .def("step", &FafEnv::Step)
         .def("is_game_over", &FafEnv::IsGameOver)
-        .def("get_all_display_names", &FafEnv::GetAllDisplayNames);
+        .def("get_all_display_names", &FafEnv::GetAllDisplayNames)
+        .def("get_map_dims", &FafEnv::GetMapDimensions)
+        .def("set_Seed", &FafEnv::SetSeed);
 }
 } // namespace faf::py

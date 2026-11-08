@@ -6,9 +6,13 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "gymnasium[mujoco]>=1.4.0",
+    "holoviews>=1.23.2",
+    "hydra-zen>=0.17.2",
     "matplotlib>=3.11.2",
     "numpy>=2.5.4",
     "opencv-python>=5.0.0.93",
+    "plotly>=7.1.0",
+    "polars>=2.1.0",
     "rerun-sdk[notebook]>=0.41.0",
     "torchrl>=0.14.1",
     "tqdm>=4.70.1",
@@ -17,6 +21,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ipykernel>=7.4.0",
+    "jupyter-bokeh>=4.1.0",
     "scikit-build-core>=0.10.0",
 ]
 
@@ -26,7 +31,7 @@ build-backend = "scikit_build_core.build"
 
 
 [tool.scikit-build]
-wheel.packages = ["src/fafrl"]
+wheel.packages = ["python/fafrl"]
 build-dir = "build/linux-clang-x64-debug"
 # Forces CMake to rebuild directly into the editable path target
 editable.mode = "redirect" 
